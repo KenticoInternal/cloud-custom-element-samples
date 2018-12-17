@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<script src="http://localhost:3000/js-api/custom-element.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+	<link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
+	<style>
+		body {
+			overflow: hidden;
+			margin: 0;
+			padding: 0;
+		}
+		#red, #green, #blue {
+			float: left;
+			clear: left;
+			width: 300px;
+			margin: 15px;
+		}
+		#swatch {
+			width: 120px;
+			height: 100px;
+			margin-top: 18px;
+			margin-left: 350px;
+			background-image: none;
+		}
+		#red .ui-slider-range { background: #ef2929; }
+		#red .ui-slider-handle { border-color: #ef2929; }
+		#green .ui-slider-range { background: #8ae234; }
+		#green .ui-slider-handle { border-color: #8ae234; }
+		#blue .ui-slider-range { background: #729fcf; }
+		#blue .ui-slider-handle { border-color: #729fcf; }
+	</style>
+</head>
+<body>
+<div id="red"></div>
+<div id="green"></div>
+<div id="blue"></div>
+
+<div id="swatch" class="ui-widget-content ui-corner-all"></div>
+
+<script>
+  function hexFromRGB(r, g, b) {
+    var hex = [
+      r.toString( 16 ),
+      g.toString( 16 ),
+      b.toString( 16 )
+    ];
+    $.each( hex, function( nr, val ) {
+      if ( val.length === 1 ) {
+        hex[ nr ] = "0" + val;
+      }
+    });
+    return hex.join( "" ).toUpperCase();
+  }
+  function refreshSwatch() {
+    var red = $( "#red" ).slider( "value" ),
+      green = $( "#green" ).slider( "value" ),
+      blue = $( "#blue" ).slider( "value" ),
+      hex = hexFromRGB( red, green, blue );
+    $( "#swatch" ).css( "background-color", "#" + hex );
+    
+    CustomElement.setValue(JSON.stringify({red, green, blue}));
+  }
+  $(function() {
+    $( "#red, #green, #blue" ).slider({
+      orientation: "horizontal",
+      range: "min",
+      max: 255,
+      value: 127,
+      slide: refreshSwatch,
+      change: refreshSwatch
+    });
+    $( "#red" ).slider( "value", 255 );
+    $( "#green" ).slider( "value", 140 );
+    $( "#blue" ).slider( "value", 60 );
+  });
+
+
+  CustomElement.init(function (el, _ctx) {
+    var color = JSON.parse(el.value);
+    $( "#red" ).slider( "value", color.red );
+    $( "#green" ).slider( "value", color.green );
+    $( "#blue" ).slider( "value", color.blue );
+  });
+  CustomElement.onDisabledChanged(function (disabled) {
+
+  });
+  
+</script>
+</body>
+</html>
