@@ -1,5 +1,5 @@
 # cloud-custom-element-samples
-Collection of the simple custom elements used for quick testing and further development of the custom element for Kentico Cloud.
+Collection of the simple Kentico Cloud custom elements used for quick testing and further development.
 
 ## How to run the custom element
 1. Start your local draft-client 
