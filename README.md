@@ -1,2 +1,2 @@
 # cloud-custom-element-samples
-Custom element examples
+Collection of the simple custom elements used for quick testing and further development of the custom element for Kentico Cloud.
