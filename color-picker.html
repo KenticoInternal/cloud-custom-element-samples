@@ -1,10 +1,9 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="http://localhost:3000/js-api/custom-element.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
-	<link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
+    <link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
 	<style>
 		body {
 			overflow: hidden;
@@ -40,6 +39,8 @@
 <div id="swatch" class="ui-widget-content ui-corner-all"></div>
 
 <script>
+  var initialized = false;
+
   function hexFromRGB(r, g, b) {
     var hex = [
       r.toString( 16 ),
@@ -53,40 +54,56 @@
     });
     return hex.join( "" ).toUpperCase();
   }
+
   function refreshSwatch() {
-    var red = $( "#red" ).slider( "value" ),
-      green = $( "#green" ).slider( "value" ),
-      blue = $( "#blue" ).slider( "value" ),
-      hex = hexFromRGB( red, green, blue );
-    $( "#swatch" ).css( "background-color", "#" + hex );
-    
-    CustomElement.setValue(JSON.stringify({red, green, blue}));
+    var red   = $("#red").slider("value"),
+        green = $("#green").slider("value"),
+        blue  = $("#blue").slider("value"),
+        hex   = hexFromRGB(red, green, blue);
+    $("#swatch").css("background-color", "#" + hex);
+
+    if(initialized) {
+      // Set changes once the picker is initialized
+      CustomElement.setValue(JSON.stringify({red, green, blue}));
+    }
   }
-  $(function() {
-    $( "#red, #green, #blue" ).slider({
+
+  function init() {
+    $('#red, #green, #blue').slider({
       orientation: "horizontal",
       range: "min",
       max: 255,
-      value: 127,
+      value: 0,
       slide: refreshSwatch,
       change: refreshSwatch
     });
-    $( "#red" ).slider( "value", 255 );
-    $( "#green" ).slider( "value", 140 );
-    $( "#blue" ).slider( "value", 60 );
-  });
+  }
 
+  function updateDisabled(disabled) {
+    if (disabled) {
+      $("#red, #green, #blue").hide();
+    }
+    else {
+      $("#red, #green, #blue").show();
+    }
+  }
 
-  CustomElement.init(function (el, _ctx) {
-    var color = JSON.parse(el.value);
-    $( "#red" ).slider( "value", color.red );
-    $( "#green" ).slider( "value", color.green );
-    $( "#blue" ).slider( "value", color.blue );
-  });
-  CustomElement.onDisabledChanged(function (disabled) {
+  init();
 
-  });
-  
+  // Load custom element js api and init the custom element
+  var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+  $.getScript(apiUrl, () => {
+    CustomElement.init((el, _ctx) => {
+      var color = JSON.parse(el.value);
+      $("#red").slider("value", color.red);
+      $("#green").slider("value", color.green);
+      $("#blue").slider("value", color.blue);
+      updateDisabled(el.disabled);
+      initialized = true;
+    });
+    CustomElement.onDisabledChanged(updateDisabled);
+  })
+
 </script>
 </body>
 </html>

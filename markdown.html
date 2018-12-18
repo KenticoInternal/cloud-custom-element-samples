@@ -1,7 +1,6 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="http://localhost:3000/js-api/custom-element.js"></script>
 	<script src="https://code.jquery.com/jquery-latest.js"></script>
 	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 	<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
@@ -62,15 +61,21 @@
     updateSize();
   }
 
+  // Set initial empty value
   initialize('');
-  CustomElement.init(function (el, _ctx) {
-    initialize(el.value);
-    updateDisabled(el.disabled);
-  });
-  CustomElement.onDisabledChanged(function (disabled) {
-    updateDisabled(disabled);
-  });
-  
+
+  // Load custom element js api and init the custom element
+  var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+  $.getScript(apiUrl, () => {
+    CustomElement.init((el, _ctx) => {
+      initialize(el.value);
+      updateDisabled(el.disabled);
+    });
+    CustomElement.onDisabledChanged((disabled) => {
+      updateDisabled(disabled);
+    });
+  })
+
 </script>
 </body>
 </html>
