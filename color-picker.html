@@ -97,9 +97,11 @@
   $.getScript(apiUrl, () => {
     CustomElement.init((el, _ctx) => {
       var color = JSON.parse(el.value);
-      $("#red").slider("value", color.red);
-      $("#green").slider("value", color.green);
-      $("#blue").slider("value", color.blue);
+	  if (color) {
+        $("#red").slider("value", color.red);
+        $("#green").slider("value", color.green);
+        $("#blue").slider("value", color.blue);
+	  }
       updateDisabled(el.disabled);
       initialized = true;
     });
