@@ -1,80 +1,87 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://code.jquery.com/jquery-latest.js"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
-	<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-		}
-	</style>
+    <script src="https://code.jquery.com/jquery-latest.js"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+    <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+    </style>
 </head>
 <body>
-<textarea id="editor"></textarea>
-<script>
-  var isDisabled = false;
-  var editorInstance = null;
-  function updateDisabled(disabled) {
-    isDisabled = disabled;
-    if (editorInstance && editorInstance.codemirror) {
-      editorInstance.codemirror.options.readOnly = !!context.disabled;
-      var elements = $('.editor-toolbar');
-      if (disabled) {
-        elements.hide();
-      }
-      else {
-        elements.show();
-      }
-    }
-  }
-  function initialize(value) {
-    editorInstance = new SimpleMDE({
-      element: document.getElementById("editor"),
-      spellChecker: false,
-      status: false,
-    });
-    function updateSize() {
-      var editorHeight = editorInstance.codemirror.getWrapperElement().offsetHeight;
-      var toolbarHeight = $('.editor-toolbar').height();
-      // TODO: update height
-    }
-    
-    function setValue(value) {
-      if (!isDisabled) {
-        CustomElement.setValue(value);
-      }
-    }
-    
-    editorInstance.value(value || '');
-    var editorChangeHandler;
-    editorInstance.codemirror.on("change", function(){
-      if (editorChangeHandler) {clearTimeout(editorChangeHandler);}
-      editorChangeHandler = setTimeout(function() {
-        setValue(editorInstance.value());
-      }, 100);
-      setTimeout(updateSize, 0);
-    });
-    window.addEventListener('resize', updateSize);
-    updateSize();
-  }
+    <textarea id="editor"></textarea>
+    <script>
+        var isDisabled = false;
+        var editorInstance = null;
 
-  // Set initial empty value
-  initialize('');
+        function updateDisabled(disabled) {
+            isDisabled = disabled;
+            if (editorInstance && editorInstance.codemirror) {
+                var elements = $('.editor-toolbar');
+                editorInstance.codemirror.options.readOnly = isDisabled;
+                if (disabled) {
+                    elements.hide();
+                }
+                else {
+                    elements.show();
+                }
+            }
+        }
 
-  // Load custom element js api and init the custom element
-  var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
-  $.getScript(apiUrl, () => {
-    CustomElement.init((el, _ctx) => {
-      initialize(el.value);
-      updateDisabled(el.disabled);
-    });
-    CustomElement.onDisabledChanged((disabled) => {
-      updateDisabled(disabled);
-    });
-  })
+        function initialize(value) {
+            if (!editorInstance) {
+                editorInstance = new SimpleMDE({
+                    element: document.getElementById('editor'),
+                    spellChecker: false,
+                    status: false,
+                });
+            }
 
-</script>
+            editorInstance.value(value || '');
+            var editorChangeHandler;
+            editorInstance.codemirror.on('change', function () {
+                if (editorChangeHandler) {
+                    clearTimeout(editorChangeHandler);
+                }
+                editorChangeHandler = setTimeout(function () {
+                    setValue(editorInstance.value());
+                }, 100);
+                setTimeout(updateSize, 0);
+            });
+            window.addEventListener('resize', updateSize);
+            updateSize();
+        }
+
+        function updateSize() {
+            var editorHeight = editorInstance.codemirror.getWrapperElement().offsetHeight;
+            var toolbarHeight = $('.editor-toolbar').height();
+            // TODO: update height
+        }
+
+        function setValue(value) {
+            if (!isDisabled) {
+                CustomElement.setValue(value || null);
+            }
+        }
+
+        // Set initial empty value
+        initialize('');
+
+        // Load custom element js api and init the custom element
+        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+        $.getScript(apiUrl, () => {
+            CustomElement.init((el, _ctx) => {
+                initialize(el.value);
+                updateDisabled(el.disabled);
+            });
+            CustomElement.onDisabledChanged((disabled) => {
+                updateDisabled(disabled);
+            });
+        })
+
+    </script>
 </body>
 </html>

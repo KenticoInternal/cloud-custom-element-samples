@@ -1,113 +1,133 @@
 <!DOCTYPE html>
 <html>
 <head>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
-	<script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.11.4/jquery-ui.min.js"></script>
     <link href="https://code.jquery.com/ui/1.11.4/themes/smoothness/jquery-ui.css" rel="stylesheet" type="text/css">
-	<style>
-		body {
-			margin: 0;
-			padding: 0;
-		}
-		#red, #green, #blue {
-			float: left;
-			clear: left;
-			width: 300px;
-			margin: 15px;
-		}
-		#swatch {
-			width: 120px;
-			height: 100px;
-			margin-top: 18px;
-			margin-left: 350px;
-			background-image: none;
-		}
-		#red .ui-slider-range { background: #ef2929; }
-		#red .ui-slider-handle { border-color: #ef2929; }
-		#green .ui-slider-range { background: #8ae234; }
-		#green .ui-slider-handle { border-color: #8ae234; }
-		#blue .ui-slider-range { background: #729fcf; }
-		#blue .ui-slider-handle { border-color: #729fcf; }
-	</style>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+        }
+
+        #red, #green, #blue {
+            float: left;
+            clear: left;
+            width: 300px;
+            margin: 15px;
+        }
+
+        #swatch {
+            width: 120px;
+            height: 100px;
+            margin-top: 18px;
+            margin-left: 350px;
+            background-image: none;
+        }
+
+        #red .ui-slider-range {
+            background: #ef2929;
+        }
+
+        #red .ui-slider-handle {
+            border-color: #ef2929;
+        }
+
+        #green .ui-slider-range {
+            background: #8ae234;
+        }
+
+        #green .ui-slider-handle {
+            border-color: #8ae234;
+        }
+
+        #blue .ui-slider-range {
+            background: #729fcf;
+        }
+
+        #blue .ui-slider-handle {
+            border-color: #729fcf;
+        }
+    </style>
 </head>
 <body>
-<div id="red"></div>
-<div id="green"></div>
-<div id="blue"></div>
+    <div id="red"></div>
+    <div id="green"></div>
+    <div id="blue"></div>
 
-<div id="swatch" class="ui-widget-content ui-corner-all"></div>
+    <div id="swatch" class="ui-widget-content ui-corner-all"></div>
 
-<script>
-  var initialized = false;
+    <script>
+        var initialized = false;
 
-  function hexFromRGB(r, g, b) {
-    var hex = [
-      r.toString( 16 ),
-      g.toString( 16 ),
-      b.toString( 16 )
-    ];
-    $.each( hex, function( nr, val ) {
-      if ( val.length === 1 ) {
-        hex[ nr ] = "0" + val;
-      }
-    });
-    return hex.join( "" ).toUpperCase();
-  }
+        function hexFromRGB(r, g, b) {
+            var hex = [
+                r.toString(16),
+                g.toString(16),
+                b.toString(16)
+            ];
+            $.each(hex, function (nr, val) {
+                if (val.length === 1) {
+                    hex[nr] = '0' + val;
+                }
+            });
+            return hex.join("").toUpperCase();
+        }
 
-  function refreshSwatch() {
-    var red   = $("#red").slider("value"),
-        green = $("#green").slider("value"),
-        blue  = $("#blue").slider("value"),
-        hex   = hexFromRGB(red, green, blue);
-    $("#swatch").css("background-color", "#" + hex);
+        function refreshSwatch() {
+            var red = $('#red').slider('value'),
+                green = $('#green').slider('value'),
+                blue = $('#blue').slider('value'),
+                hex = hexFromRGB(red, green, blue);
+            $('#swatch').css('background-color', '#' + hex);
 
-    if(initialized) {
-      // Set changes once the picker is initialized
-      CustomElement.setValue(JSON.stringify({red, green, blue}));
-    }
-  }
+            if (initialized) {
+                // Set changes once the picker is initialized
+                CustomElement.setValue(JSON.stringify({ red, green, blue }));
+            }
+        }
 
-  function init() {
-    $('#red, #green, #blue').slider({
-      orientation: "horizontal",
-      range: "min",
-      max: 255,
-      value: 128,
-      slide: refreshSwatch,
-      change: refreshSwatch
-    });
+        function init() {
+            $('#red, #green, #blue').slider({
+                orientation: '"horizontal',
+                range: 'min',
+                max: 255,
+                value: 128,
+                slide: refreshSwatch,
+                change: refreshSwatch
+            });
 
-    // Initial color
-    refreshSwatch();
-  }
+            // Initial color
+            refreshSwatch();
+        }
 
-  function updateDisabled(disabled) {
-    if (disabled) {
-      $("#red, #green, #blue").hide();
-    }
-    else {
-      $("#red, #green, #blue").show();
-    }
-  }
+        function updateDisabled(disabled) {
+            if (disabled) {
+                $('#red, #green, #blue').slider('disable');
+            }
+            else {
+                $('#red, #green, #blue').show('enable');
+            }
+        }
 
-  init();
+        init();
 
-  // Load custom element js api and init the custom element
-  var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
-  $.getScript(apiUrl, () => {
-    CustomElement.init((el, _ctx) => {
-      var color = JSON.parse(el.value);
-	  if (color) {
-        $("#red").slider("value", color.red);
-        $("#green").slider("value", color.green);
-        $("#blue").slider("value", color.blue);
-	  }
-      updateDisabled(el.disabled);
-      initialized = true;
-    });
-    CustomElement.onDisabledChanged(updateDisabled);
-  })
+        // Load custom element js api and init the custom element
+        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+        $.getScript(apiUrl, () => {
+            CustomElement.init((el, _ctx) => {
+                var color = JSON.parse(el.value);
+                if (color) {
+                    $('#red').slider('value', color.red);
+                    $('#green').slider('value', color.green);
+                    $('#blue').slider('value', color.blue);
+                }
+                updateDisabled(el.disabled);
+                initialized = true;
+            });
+            CustomElement.onDisabledChanged(updateDisabled);
+        })
 
-</script>
+    </script>
 </body>
 </html>
