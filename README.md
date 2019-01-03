@@ -2,8 +2,8 @@
 Collection of the simple Kentico Cloud custom elements used for quick testing and further development.
 
 ## How to run the custom element locally
-1. Start your local draft-client 
-2. npm run build-custom-element
+1. Open your draft-client and run ```npm run build-custom-element```
+2. Start your draft-client local server ```npm run start-dev```
 3. Create your custom element in the UI and paste custom element url
 
 ## How to run the custom element on some hosted enviroment
