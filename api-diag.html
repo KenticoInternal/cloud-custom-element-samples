@@ -54,7 +54,7 @@
         <h4>Value</h4>
         <input id="btnSendNull" type="button" value="Send null" />
         <input id="btnSend100messages" type="button" value="Send 100 updates" />
-        <input id="btnSendTimestamp" type="button" value="Send timestampt" />
+        <input id="btnSendTimestamp" type="button" value="Send timestamp" />
         <br />
         <textarea id="txtValue" rows="4" cols="50"></textarea>
     </div>
@@ -89,24 +89,24 @@
         }
 
         function init() {
-            $("#txtValue").keyup(() => {
+            $("#txtValue").keyup(function () {
                 var value = $(this).val();
                 sendValue(value);
             });
 
-            $("#btnSendNull").click(() => {
+            $("#btnSendNull").click(function () {
                 sendValue(null);
                 displayValue(null);
             })
 
-            $("#btnSendTimestamp").click(() => {
+            $("#btnSendTimestamp").click(function () {
                 var now = new Date();
                 var nowString = now.toISOString();
                 sendValue(nowString);
                 displayValue(nowString);
             })
 
-            $("#btnSend100messages").click(() => {
+            $("#btnSend100messages").click(function () {
                 var value = null;
                 for (var i = 1; i <= 100; i++) {
                     value = "Update " + i;
