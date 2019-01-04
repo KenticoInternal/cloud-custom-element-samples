@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: "Source Sans Pro", sans-serif;
+        }
+
+        dt {
+            float: left;
+            width: 20%;
+            padding: .25em;
+            clear: left;
+        }
+
+        dd {
+            padding: .25em 0;
+        }
+
+        h4 {
+            margin: .25em 0;
+        }
+
+        #context, #value {
+            float: left;
+            width: 50%;
+        }
+
+        #config {
+            clear: both;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="context">
+        <h4>Context</h4>
+        <dl>
+            <dt>Disabled</dt>
+            <dd id="lblEnabled"></dd>
+            <dt>Project id</dt>
+            <dd id="lblProjectId"></dd>
+            <dt>Item id</dt>
+            <dd id="lblItemId"></dd>
+            <dt>Variant id</dt>
+            <dd id="lblVariantId"></dd>
+        </dl>
+    </div>
+    <div id="value">
+        <h4>Value</h4>
+        <input id="btnSendNull" type="button" value="Send null" />
+        <input id="btnSend100messages" type="button" value="Send 100 updates" />
+        <input id="btnSendTimestamp" type="button" value="Send timestampt" />
+        <br />
+        <textarea id="txtValue" rows="4" cols="50"></textarea>
+    </div>
+    <div id="config">
+        <h4>Config</h4>
+        <p id="lblConfig"></p>
+    </div>
+    <script>
+        function sendValue(value) {
+            console.log("Sending: " + value);
+            CustomElement.setValue(value);
+        }
+        function handleOnDisabledChanged(disabled) {
+            console.log("onDisabledChanged received: " + disabled);
+            displayDisabled(disabled);
+        }
+
+        function displayValue(value) {
+            $("#txtValue").val(value);
+        }
+        function displayDisabled(disabled) {
+            $("#lblEnabled").text(disabled);
+        }
+        function displayConfig(config) {
+            configString = config ? JSON.stringify(config) : "";
+            $("#lblConfig").text(configString);
+        }
+        function displayContext(context) {
+            $("#lblProjectId").text(context.projectId);
+            $("#lblItemId").text(context.item.id);
+            $("#lblVariantId").text(context.variantId);
+        }
+
+        function init() {
+            $("#txtValue").keyup(() => {
+                var value = $(this).val();
+                sendValue(value);
+            });
+
+            $("#btnSendNull").click(() => {
+                sendValue(null);
+                displayValue(null);
+            })
+
+            $("#btnSendTimestamp").click(() => {
+                var now = new Date();
+                var nowString = now.toISOString();
+                sendValue(nowString);
+                displayValue(nowString);
+            })
+
+            $("#btnSend100messages").click(() => {
+                var value = null;
+                for (var i = 1; i <= 100; i++) {
+                    value = "Update " + i;
+                    sendValue(value);
+                }
+                displayValue(value);
+            })
+        }
+
+        init();
+        // Load custom element js api and init the custom element
+        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+        $.getScript(apiUrl, () => {
+            CustomElement.init((el, _ctx) => {
+                console.log("Init: " + JSON.stringify(el));
+                displayValue(el.value);
+                displayConfig(el.config);
+                displayDisabled(el.disabled);
+                displayContext(_ctx);
+            });
+            CustomElement.onDisabledChanged(handleOnDisabledChanged);
+        })
+    </script>
+</body>
+
+</html>

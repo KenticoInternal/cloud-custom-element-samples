@@ -14,6 +14,7 @@ Collection of the simple Kentico Cloud custom elements used for quick testing an
 ## Custom element samples
 1. Simple markdown element: [https://kentico.github.io/cloud-custom-element-samples/markdown.html](https://kentico.github.io/cloud-custom-element-samples/markdown.html)
 2. RGB color picker: [https://kentico.github.io/cloud-custom-element-samples/color-picker.html](https://kentico.github.io/cloud-custom-element-samples/color-picker.html)
+3. API diagnostics element: [https://kentico.github.io/cloud-custom-element-samples/api-diag.html](https://kentico.github.io/cloud-custom-element-samples/api-diag.html)
 
 ## How to create a new sample custom element
 1. Create html page and place your code there
