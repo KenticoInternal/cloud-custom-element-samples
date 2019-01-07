@@ -41,7 +41,7 @@
         <h4>Context</h4>
         <dl>
             <dt>Disabled</dt>
-            <dd id="lblEnabled"></dd>
+            <dd id="lblDisabled"></dd>
             <dt>Project id</dt>
             <dd id="lblProjectId"></dd>
             <dt>Item id</dt>
@@ -60,7 +60,7 @@
     </div>
     <div id="config">
         <h4>Config</h4>
-        <p id="lblConfig"></p>
+        <pre id="lblConfig"></pre>
     </div>
     <script>
         function sendValue(value) {
@@ -79,7 +79,7 @@
             $("#lblEnabled").text(disabled);
         }
         function displayConfig(config) {
-            configString = config ? JSON.stringify(config) : "";
+            var configString = JSON.stringify(config, null, 2);
             $("#lblConfig").text(configString);
         }
         function displayContext(context) {
@@ -97,14 +97,14 @@
             $("#btnSendNull").click(function () {
                 sendValue(null);
                 displayValue(null);
-            })
+            });
 
             $("#btnSendTimestamp").click(function () {
                 var now = new Date();
                 var nowString = now.toISOString();
                 sendValue(nowString);
                 displayValue(nowString);
-            })
+            });
 
             $("#btnSend100messages").click(function () {
                 var value = null;
@@ -113,7 +113,7 @@
                     sendValue(value);
                 }
                 displayValue(value);
-            })
+            });
         }
 
         init();
