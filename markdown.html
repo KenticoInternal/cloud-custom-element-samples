@@ -8,6 +8,7 @@
         body {
             margin: 0;
             padding: 0;
+            overflow: hidden;
         }
     </style>
 </head>
@@ -52,13 +53,11 @@
                 setTimeout(updateSize, 0);
             });
             window.addEventListener('resize', updateSize);
-            updateSize();
         }
 
         function updateSize() {
-            var editorHeight = editorInstance.codemirror.getWrapperElement().offsetHeight;
-            var toolbarHeight = $('.editor-toolbar').height();
-            // TODO: update height
+            var height = $("html").height()
+            CustomElement.setHeight(height);
         }
 
         function setValue(value) {
@@ -80,6 +79,7 @@
             CustomElement.onDisabledChanged((disabled) => {
                 updateDisabled(disabled);
             });
+            updateSize();
         })
 
     </script>

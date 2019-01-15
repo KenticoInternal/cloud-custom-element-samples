@@ -37,6 +37,10 @@
 </head>
 
 <body>
+    <div id="actions">
+        <input id="btnExpand" type="button" value="Expand" />
+        <input id="btnCollapse" type="button" value="Collapse" />
+    </div>
     <div id="context">
         <h4>Context</h4>
         <dl>
@@ -66,6 +70,10 @@
         function sendValue(value) {
             console.log("Sending: " + value);
             CustomElement.setValue(value);
+        }
+        function setHeight(height) {
+            console.log("Setting height: " + height);
+            CustomElement.setHeight(height);
         }
         function handleOnDisabledChanged(disabled) {
             console.log("onDisabledChanged received: " + disabled);
@@ -113,6 +121,14 @@
                     sendValue(value);
                 }
                 displayValue(value);
+            });
+
+            $("#btnExpand").click(function () {
+                var height = $("html").height()
+                setHeight(height);
+            });
+            $("#btnCollapse").click(function () {
+                setHeight(32);
             });
         }
 
