@@ -36,8 +36,9 @@
             if (!editorInstance) {
                 editorInstance = new SimpleMDE({
                     element: document.getElementById('editor'),
+                    hideIcons: ["fullscreen", "guide", "side-by-side"],
                     spellChecker: false,
-                    status: false,
+                    status: ["lines", "words"],
                 });
             }
 
