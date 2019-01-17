@@ -38,8 +38,10 @@
 
 <body>
     <div id="actions">
-        <input id="btnExpand" type="button" value="Expand" />
-        <input id="btnCollapse" type="button" value="Collapse" />
+        <button onclick="expand()">Expand</button>
+        <button onclick="collapse()">Collapse</button>
+        <button onclick="myVar = setInterval(makeMoreSpace, 1000)">Start expanding</button>
+        <button onclick="clearTimeout(myVar)">Stop expanding</button>
     </div>
     <div id="context">
         <h4>Context</h4>
@@ -56,9 +58,9 @@
     </div>
     <div id="value">
         <h4>Value</h4>
-        <input id="btnSendNull" type="button" value="Send null" />
-        <input id="btnSend100messages" type="button" value="Send 100 updates" />
-        <input id="btnSendTimestamp" type="button" value="Send timestamp" />
+        <button onclick="sendNull()">Send null</button>
+        <button onclick="send100messages()">Send 100 updates</button>
+        <button onclick="sendTimestamp()">Send timestamp</button>
         <br />
         <textarea id="txtValue" rows="4" cols="50"></textarea>
     </div>
@@ -67,6 +69,8 @@
         <pre id="lblConfig"></pre>
     </div>
     <script>
+        var currentHeight = 32;
+
         function sendValue(value) {
             console.log("Sending: " + value);
             CustomElement.setValue(value);
@@ -95,40 +99,41 @@
             $("#lblItemId").text(context.item.id);
             $("#lblVariantId").text(context.variantId);
         }
+        function expand() {
+            currentHeight = $("html").height()
+            setHeight(currentHeight);
+        }
+        function collapse() {
+            currentHeight = 32
+            setHeight(currentHeight);
+        };
+        function makeMoreSpace() {
+            currentHeight += 32;
+            setHeight(currentHeight);
+        }
+        function sendNull() {
+            sendValue(null);
+            displayValue(null);
+        }
+        function send100messages() {
+            var value = null;
+            for (var i = 1; i <= 100; i++) {
+                value = "Update " + i;
+                sendValue(value);
+            }
+            displayValue(value);
+        } 
+        function sendTimestamp() {
+            var now = new Date();
+            var nowString = now.toISOString();
+            sendValue(nowString);
+            displayValue(nowString);
+        }
 
         function init() {
             $("#txtValue").keyup(function () {
                 var value = $(this).val();
                 sendValue(value);
-            });
-
-            $("#btnSendNull").click(function () {
-                sendValue(null);
-                displayValue(null);
-            });
-
-            $("#btnSendTimestamp").click(function () {
-                var now = new Date();
-                var nowString = now.toISOString();
-                sendValue(nowString);
-                displayValue(nowString);
-            });
-
-            $("#btnSend100messages").click(function () {
-                var value = null;
-                for (var i = 1; i <= 100; i++) {
-                    value = "Update " + i;
-                    sendValue(value);
-                }
-                displayValue(value);
-            });
-
-            $("#btnExpand").click(function () {
-                var height = $("html").height()
-                setHeight(height);
-            });
-            $("#btnCollapse").click(function () {
-                setHeight(32);
             });
         }
 
