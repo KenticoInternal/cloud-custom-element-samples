@@ -82,8 +82,9 @@
             CustomElement.setValue(value);
         }
         function setHeight(height) {
-            console.log("Setting height: " + height);
-            CustomElement.setHeight(height);
+            const roundedHeight = Math.ceil(height);
+            console.log("Setting height: " + roundedHeight);
+            CustomElement.setHeight(roundedHeight);
         }
         function handleOnDisabledChanged(disabled) {
             console.log("onDisabledChanged received: " + disabled);

@@ -57,7 +57,7 @@
         }
 
         function updateSize() {
-            var height = $("html").height()
+            var height = Math.ceil($("html").height());
             CustomElement.setHeight(height);
         }
 
