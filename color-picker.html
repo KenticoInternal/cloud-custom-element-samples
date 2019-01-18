@@ -113,7 +113,7 @@
         init();
 
         // Load custom element js api and init the custom element
-        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'http://localhost:3000/js-api/custom-element.js';
+        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'https://dev-draft.global.ssl.fastly.net/js-api/custom-element.js';
         $.getScript(apiUrl, () => {
             CustomElement.init((el, _ctx) => {
                 var color = JSON.parse(el.value);
