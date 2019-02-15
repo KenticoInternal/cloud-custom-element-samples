@@ -1,0 +1,145 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Cropper</title>
+    <!-- libs -->
+    <script src="https://cdn.jsdelivr.net/npm/jquery@3.3.1/dist/jquery.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.css" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/cropper/4.0.0/cropper.min.js"></script>
+
+    <!-- Kentico Custom elements API-->
+    <script src="https://app.kenticocloud.com/js-api/custom-element.js"></script>
+    <link href="https://kentico.github.io/custom-element-samples/shared/custom-element.css" rel="stylesheet">
+
+    <!-- Custom elements styles -->
+    <style>
+        body {
+            margin: 0;
+        }
+
+        .container {
+            display: flex;
+        }
+
+        #image {
+            margin: 0 auto;
+            max-width: 100%; /* This rule is very important, please do not ignore this! */
+        }
+
+        .wrapper {
+            flex: 1;
+            max-height: 600px;
+        }
+
+        .preview {
+            margin: 0 auto;
+            width: 300px;
+            height: 300px;
+            overflow: hidden;
+            outline: 5px dashed gray;
+        }
+
+        .preview-wrapper {
+            width: 340px;
+            text-align: center;
+            padding: 0 20px;
+        }
+
+        .form {
+            padding: 8px;
+            max-width: 500px
+        }
+    </style>
+</head>
+<body>
+    <!-- Custom element HTML -->
+
+    <div class="form">
+        <div class="text-field">
+            <input class="text-field__input" type="text" placeholder="Insert img url" value="">
+            <button class="btn btn--primary" onclick="updateImg()">Reload</button>
+        </div>
+    </div>
+    <div class="container">
+        <div class="wrapper">
+            <img id="image" src="https://www.w3schools.com/w3images/fjords.jpg" />
+        </div>
+        <div class="preview-wrapper">
+            <h3>Preview</h3>
+            <div class="preview"></div>
+        </div>
+    </div>
+
+    <!-- Custom element code -->
+    <script>
+        var $image = $('#image');
+
+        function updateImg() {
+            const newSrc = $('input').val();
+            if (!newSrc)
+                return;
+
+            setImage(newSrc);
+            setupCropper();
+        }
+
+        function updateSize() {
+            // Update the custom element height in the Kentico UI.
+            const height = Math.ceil($("html").height());
+            CustomElement.setHeight(height);
+        }
+
+        function setupCropper(data) {
+            $image.cropper({
+                data: data || null,
+                preview: '.preview',
+                zoomable: false,
+                responsive: true,
+                checkCrossOrigin: false,
+                scalable: false,
+                movable: false,
+                cropend: function (ev) {
+                    const data = $image.data('cropper').getData();
+                    setValue(data);
+                },
+                ready: function (e) {
+                    updateSize();
+                }
+            });
+        }
+
+        function setValue(data) {
+            var json = JSON.stringify({ src: $image.attr('src'), data });
+            CustomElement.setValue(json);
+        }
+
+        function setImage(newSrc) {
+            $image.cropper('destroy');
+            $image.attr('src', newSrc);
+        }
+
+        function initCustomElement() {
+            try {
+                CustomElement.init((element, _context) => {
+                    if (element.value) {
+                        var value = JSON.parse(element.value);
+                        $image.on('load', () => setupCropper(value.data));
+                        setImage(value.src);  
+                        $('input').val(value.src);
+
+                    } else {
+                        setupCropper();
+                    }
+                });
+            } catch (err) {
+                // Initialization with Kentico Custom element API failed (page displayed outside of the Kentico UI)
+                setupCropper();
+            }
+        }
+
+        initCustomElement();
+
+    </script>
+</body>
+</html>
