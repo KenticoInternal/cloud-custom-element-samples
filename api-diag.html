@@ -7,7 +7,7 @@
     <style>
         body {
             margin: 0;
-            padding: 0;
+            padding: 5px;
             font-family: "Source Sans Pro", sans-serif;
         }
 
@@ -26,17 +26,19 @@
             margin: .25em 0;
         }
 
+        .tiles {
+            display: flex;
+            flex-wrap: wrap;
+        }
+
+        .tile {
+            flex: 1 1 auto;
+            width: 50%;
+            margin-top: 10px;
+        }
+
         #contextValues {
             font-size: smaller;
-        }
-
-        #context, #value {
-            float: left;
-            width: 50%;
-        }
-
-        #config {
-            clear: both;
         }
     </style>
 </head>
@@ -48,35 +50,55 @@
         <button onclick="myVar = setInterval(makeMoreSpace, 1000)" class="btn btn--secondary">Start expanding</button>
         <button onclick="clearTimeout(myVar)" class="btn btn--secondary">Stop expanding</button>
     </div>
-    <div id="context">
-        <h4>Context</h4>
-        <dl id="contextValues">
-            <dt>Disabled</dt>
-            <dd id="lblDisabled"></dd>
-            <dt>Project id</dt>
-            <dd id="lblProjectId"></dd>
-            <dt>Item id</dt>
-            <dd id="lblItemId"></dd>
-            <dt>Variant id</dt>
-            <dd id="lblVariantId"></dd>
-            <dt>Lang codename</dt>
-            <dd id="lblLanguageCodeName"></dd>
-        </dl>
-    </div>
-    <div id="value">
-        <h4>Value</h4>
-        <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
-        <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
-        <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
-        <br />
-        <textarea id="txtValue" rows="4" cols="50"></textarea>
-    </div>
-    <div id="config">
-        <h4>Config</h4>
-        <pre id="lblConfig"></pre>
+    <div class="tiles">
+        <div class="tile">
+            <h4>Context</h4>
+            <dl id="contextValues">
+                <dt>Disabled</dt>
+                <dd id="lblDisabled"></dd>
+                <dt>Project id</dt>
+                <dd id="lblProjectId"></dd>
+                <dt>Item id</dt>
+                <dd id="lblItemId"></dd>
+                <dt>Variant id</dt>
+                <dd id="lblVariantId"></dd>
+                <dt>Lang codename</dt>
+                <dd id="lblLanguageCodeName"></dd>
+            </dl>
+        </div>
+        <div class="tile">
+            <h4>Value</h4>
+            <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
+            <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
+            <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
+            <br />
+            <textarea id="txtValue" rows="4" cols="50"></textarea>
+        </div>
+        <div class="tile">
+            <h4>Config</h4>
+            <pre id="lblConfig"></pre>
+        </div>
+        <div class="tile">
+            <h4>Other value</h4>
+            <button onclick="readOtherValue(otherElement)" class="btn btn--secondary" id="btnGetOther">Read other value</button>
+            <button onclick="readOtherValue('non_existing')" class="btn btn--secondary">Read non-existing value</button>
+            <br />
+            <textarea id="txtOtherValue" rows="4" cols="50" readonly></textarea>
+        </div>
+        <div class="tile">
+        </div>
+        <div class="tile">
+            <h4>Observe changes</h4>
+            <button onclick="observeChanges([otherElement])" class="btn btn--secondary" id="btnListenOther">Listen to other</button>
+            <button onclick="observeChanges([])" class="btn btn--secondary">Listen to all</button>
+            <button onclick="stopListening()" class="btn btn--secondary">Stop listening</button>
+            <br />
+            <textarea id="txtChanges" rows="4" cols="50" readonly></textarea>
+        </div>
     </div>
     <script>
         var currentHeight = 32;
+        var otherElement = '';
 
         function sendValue(value) {
             console.log("Sending: " + value);
@@ -113,9 +135,9 @@
             setHeight(currentHeight);
         }
         function collapse() {
-            currentHeight = 32
+            currentHeight = 50;
             setHeight(currentHeight);
-        };
+        }
         function makeMoreSpace() {
             currentHeight += 32;
             setHeight(currentHeight);
@@ -138,6 +160,37 @@
             sendValue(nowString);
             displayValue(nowString);
         }
+        function readOtherValue(elementCodename) {
+            console.log("Reading value of " + elementCodename);
+            CustomElement.getElementValue(elementCodename, function (value) {
+                $("#txtOtherValue").text(value);
+            });
+        }
+
+        var cancellationToken = { ts: Date() };
+
+        function receiveChanges(elementCodenames, cancellation) {
+            if (cancellation.cancelled) {
+                return;
+            }
+            var now = new Date();
+            var nowString = now.toISOString();
+            $("#txtChanges").text(`${JSON.stringify(elementCodenames)} ${nowString}`);
+        }
+        function observeChanges(elementCodenames) {
+            stopListening();
+            console.log(`Observing changes of ${JSON.stringify(elementCodenames)}`);
+            var cancellation = cancellationToken;
+            CustomElement.observeElementChanges(
+                elementCodenames,
+                changedElementCodenames => receiveChanges(changedElementCodenames, cancellation)
+            );
+        }
+        function stopListening() {
+            $("#txtChanges").text("");
+            cancellationToken.cancelled = true;
+            cancellationToken = { ts: Date() };
+        }
 
         function init() {
             $("#txtValue").keyup(function () {
@@ -152,6 +205,7 @@
         $.getScript(apiUrl, () => {
             CustomElement.init((el, _ctx) => {
                 console.log("Init: " + JSON.stringify(el));
+                otherElement = el.config && el.config.otherElement;
                 displayValue(el.value);
                 displayConfig(el.config);
                 displayDisabled(el.disabled);
