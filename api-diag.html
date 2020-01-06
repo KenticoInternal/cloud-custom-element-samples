@@ -86,7 +86,7 @@
             <button id="btnGetItemDetails" onclick="getItemDetails()" class="btn btn--secondary"> Get item details</button>
             <br/>
             <textarea
-                    id="txtObjectId"
+                    id="txtObjectIds"
                     rows="4"
                     cols="50"
             ></textarea>
@@ -151,11 +151,11 @@
         }
 
         function getAssetDetails() {
-            CustomElement.getAssetDetails($("#txtObjectId").val().split('\n'), handleOnGetDetails)
+            CustomElement.getAssetDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
         }
 
         function getItemDetails() {
-            CustomElement.getItemDetails($("#txtObjectId").val().split('\n'), handleOnGetDetails)
+            CustomElement.getItemDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
         }
 
         function handleOnItemsSelected(items) {
@@ -169,7 +169,7 @@
         function selectAsset() {
             CustomElement.selectAssets({
                 allowMultiple: false,
-                fileType: 'alls'
+                fileType: 'all'
             }, handleOnAssetsSelected);
         }
 
