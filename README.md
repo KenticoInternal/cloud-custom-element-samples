@@ -9,7 +9,7 @@ Collection of the simple Kentico Cloud custom elements used for quick testing an
 ## How to run the custom element on some hosted enviroment
 1. Create your custom element in the UI and paste custom element url with appended query string
 
-```<yourElementUrl>?apiUrl=\<pathToHostedApp\>/js-api/custom-element.js```
+```<yourElementUrl>?apiUrl=\<pathToHostedApp\>/js-api/custom-element/v1/custom-element.min.js```
 
 ## Custom element samples
 1. Simple markdown element: [https://kenticointernal.github.io/cloud-custom-element-samples/markdown.html](https://kenticointernal.github.io/cloud-custom-element-samples/markdown.html)
