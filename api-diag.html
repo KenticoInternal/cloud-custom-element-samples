@@ -68,11 +68,11 @@
         </div>
         <div class="tile">
             <h4>Selectors</h4>
-            <button onclick="selectItem()" class="btn btn--secondary">Select item</button>
-            <button onclick="selectAsset()" class="btn btn--secondary">Select asset</button>
-            <button onclick="selectItems()" class="btn btn--secondary">Select items</button>
-            <button onclick="selectAssets()" class="btn btn--secondary">Select assets</button>
-            <button onclick="selectImages()" class="btn btn--secondary">Select images</button>
+            <button id="btnSelectItem" onclick="selectItem()" class="btn btn--secondary">Select item</button>
+            <button id="btnSelectAsset" onclick="selectAsset()" class="btn btn--secondary">Select asset</button>
+            <button id="btnSelectItems" onclick="selectItems()" class="btn btn--secondary">Select items</button>
+            <button id="btnSelectAssets" onclick="selectAssets()" class="btn btn--secondary">Select assets</button>
+            <button id="btnSelectImages" onclick="selectImages()" class="btn btn--secondary">Select images</button>
             <br/>
             <textarea
                     id="txtSelectorValue"
@@ -82,8 +82,8 @@
         </div>
         <div class="tile">
             <h4>Item and asset details</h4>
-            <button onclick="getAssetDetails()" class="btn btn--secondary"> Get asset details</button>
-            <button onclick="getItemDetails()" class="btn btn--secondary"> Get item details</button>
+            <button id="btnGetAssetDetails"  onclick="getAssetDetails()" class="btn btn--secondary"> Get asset details</button>
+            <button id="btnGetItemDetails" onclick="getItemDetails()" class="btn btn--secondary"> Get item details</button>
             <br/>
             <textarea
                     id="txtObjectId"
