@@ -33,7 +33,7 @@
 
         .tile {
             flex: 1 1 auto;
-            width: 50%;
+            width: 100%;
             margin-top: 10px;
         }
 
@@ -67,48 +67,141 @@
             </dl>
         </div>
         <div class="tile">
-            <h4>Value</h4>
-            <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
-            <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
-            <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
-            <br />
-            <textarea id="txtValue" rows="4" cols="50"></textarea>
+            <h4>Selectors</h4>
+            <button id="btnSelectItem" onclick="selectItem()" class="btn btn--secondary">Select item</button>
+            <button id="btnSelectAsset" onclick="selectAsset()" class="btn btn--secondary">Select asset</button>
+            <button id="btnSelectItems" onclick="selectItems()" class="btn btn--secondary">Select items</button>
+            <button id="btnSelectAssets" onclick="selectAssets()" class="btn btn--secondary">Select assets</button>
+            <button id="btnSelectImages" onclick="selectImages()" class="btn btn--secondary">Select images</button>
+            <br/>
+            <textarea
+                    id="txtSelectorValue"
+                    rows="4"
+                    cols="60"
+            ></textarea>
         </div>
         <div class="tile">
-            <h4>Config</h4>
-            <pre id="lblConfig"></pre>
+            <h4>Item and asset details</h4>
+            <button id="btnGetAssetDetails"  onclick="getAssetDetails()" class="btn btn--secondary"> Get asset details</button>
+            <button id="btnGetItemDetails" onclick="getItemDetails()" class="btn btn--secondary"> Get item details</button>
+            <br/>
+            <textarea
+                    id="txtObjectIds"
+                    rows="4"
+                    cols="50"
+            ></textarea>
+            <br/>
+            <span>Hint: Asset or item ids (one on line)</span>
         </div>
-        <div class="tile">
-            <h4>Other value</h4>
-            <button onclick="readOtherValue(otherElement)" class="btn btn--secondary" id="btnGetOther">Read other value</button>
-            <button onclick="readOtherValue('non_existing')" class="btn btn--secondary">Read non-existing value</button>
-            <br />
-            <textarea id="txtOtherValue" rows="4" cols="50" readonly></textarea>
-        </div>
-        <div class="tile">
-        </div>
-        <div class="tile">
-            <h4>Observe changes</h4>
-            <button onclick="observeChanges([otherElement])" class="btn btn--secondary" id="btnListenOther">Listen to other</button>
-            <button onclick="observeChanges([])" class="btn btn--secondary">Listen to all</button>
-            <button onclick="stopListening()" class="btn btn--secondary">Stop listening</button>
-            <br />
-            <textarea id="txtChanges" rows="4" cols="50" readonly></textarea>
-        </div>
+    </div>
+    <div class="tile">
+        <h4>Value</h4>
+        <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
+        <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
+        <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
+        <br/>
+        <textarea
+                id="txtValue"
+                rows="4"
+                cols="50"
+        ></textarea>
+    </div>
+    <div class="tile">
+        <h4>Config</h4>
+        <pre id="lblConfig"></pre>
+    </div>
+    <div class="tile">
+        <h4>Other value</h4>
+        <button onclick="readOtherValue(otherElement)" class="btn btn--secondary" id="btnGetOther">Read other value</button>
+        <button onclick="readOtherValue('non_existing')" class="btn btn--secondary">Read non-existing value</button>
+        <br/>
+        <textarea
+                id="txtOtherValue"
+                rows="4"
+                cols="50"
+                readonly
+        ></textarea>
+    </div>
+    <div class="tile">
+    </div>
+    <div class="tile">
+        <h4>Observe changes</h4>
+        <button onclick="observeChanges([otherElement])" class="btn btn--secondary" id="btnListenOther">Listen to other</button>
+        <button onclick="observeChanges([])" class="btn btn--secondary">Listen to all</button>
+        <button onclick="stopListening()" class="btn btn--secondary">Stop listening</button>
+        <br/>
+        <textarea
+                id="txtChanges"
+                rows="4"
+                cols="50"
+                readonly
+        ></textarea>
+    </div>
     </div>
     <script>
         var currentHeight = 32;
         var otherElement = '';
 
+        function selectItem() {
+            CustomElement.selectItems({ allowMultiple: false }, handleOnItemsSelected);
+        }
+
+        function selectItems() {
+            CustomElement.selectItems({ allowMultiple: true }, handleOnItemsSelected);
+        }
+
+        function getAssetDetails() {
+            CustomElement.getAssetDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
+        }
+
+        function getItemDetails() {
+            CustomElement.getItemDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
+        }
+
+        function handleOnItemsSelected(items) {
+            displaySelectorValue(items);
+        }
+
+        function handleOnGetDetails(details) {
+            displaySelectorValue(details);
+        }
+
+        function selectAsset() {
+            CustomElement.selectAssets({
+                allowMultiple: false,
+                fileType: 'all'
+            }, handleOnAssetsSelected);
+        }
+
+        function selectAssets() {
+            CustomElement.selectAssets({
+                allowMultiple: true,
+                fileType: 'all'
+            }, handleOnAssetsSelected);
+        }
+
+        function selectImages() {
+            CustomElement.selectAssets({
+                allowMultiple: true,
+                fileType: 'images'
+            }, handleOnAssetsSelected);
+        }
+
+        function handleOnAssetsSelected(assets) {
+            displaySelectorValue(assets);
+        }
+
         function sendValue(value) {
             console.log("Sending: " + value);
             CustomElement.setValue(value);
         }
+
         function setHeight(height) {
             const roundedHeight = Math.ceil(height);
             console.log("Setting height: " + roundedHeight);
             CustomElement.setHeight(roundedHeight);
         }
+
         function handleOnDisabledChanged(disabled) {
             console.log("onDisabledChanged received: " + disabled);
             displayDisabled(disabled);
@@ -117,35 +210,47 @@
         function displayValue(value) {
             $("#txtValue").val(value);
         }
+
         function displayDisabled(disabled) {
             $("#lblDisabled").text(disabled);
         }
+
+        function displaySelectorValue(value) {
+            $("#txtSelectorValue").text(JSON.stringify(value));
+        }
+
         function displayConfig(config) {
             var configString = JSON.stringify(config, null, 2);
             $("#lblConfig").text(configString);
         }
+
         function displayContext(context) {
             $("#lblProjectId").text(context.projectId);
             $("#lblItemId").text(context.item.id);
             $("#lblVariantId").text(context.variant.id);
             $("#lblLanguageCodeName").text(context.variant.codename);
         }
+
         function expand() {
-            currentHeight = $("html").height()
+            currentHeight = $("html").height();
             setHeight(currentHeight);
         }
+
         function collapse() {
             currentHeight = 50;
             setHeight(currentHeight);
         }
+
         function makeMoreSpace() {
             currentHeight += 32;
             setHeight(currentHeight);
         }
+
         function sendNull() {
             sendValue(null);
             displayValue(null);
         }
+
         function send100messages() {
             var value = null;
             for (var i = 1; i <= 100; i++) {
@@ -154,12 +259,14 @@
             }
             displayValue(value);
         }
+
         function sendTimestamp() {
             var now = new Date();
             var nowString = now.toISOString();
             sendValue(nowString);
             displayValue(nowString);
         }
+
         function readOtherValue(elementCodename) {
             console.log("Reading value of " + elementCodename);
             CustomElement.getElementValue(elementCodename, function (value) {
@@ -177,6 +284,7 @@
             var nowString = now.toISOString();
             $("#txtChanges").text(`${JSON.stringify(elementCodenames)} ${nowString}`);
         }
+
         function observeChanges(elementCodenames) {
             stopListening();
             console.log(`Observing changes of ${JSON.stringify(elementCodenames)}`);
@@ -186,6 +294,7 @@
                 changedElementCodenames => receiveChanges(changedElementCodenames, cancellation)
             );
         }
+
         function stopListening() {
             $("#txtChanges").text("");
             cancellationToken.cancelled = true;
@@ -201,7 +310,10 @@
 
         init();
         // Load custom element js api and init the custom element
-        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl') || 'https://dev-draft.global.ssl.fastly.net/js-api/custom-element.js';
+        var apiUrl = new URLSearchParams(window.location.search).get('apiUrl');
+        if (!apiUrl) {
+            throw Error('apiUrl query parameter is missing. Example: https://dev-draft.global.ssl.fastly.net/js-api/custom-element/v1/custom-element.min.js');
+        }
         $.getScript(apiUrl, () => {
             CustomElement.init((el, _ctx) => {
                 console.log("Init: " + JSON.stringify(el));
