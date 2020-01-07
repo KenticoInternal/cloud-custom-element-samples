@@ -137,25 +137,24 @@
                 readonly
         ></textarea>
     </div>
-    </div>
     <script>
         var currentHeight = 32;
         var otherElement = '';
 
         function selectItem() {
-            CustomElement.selectItems({ allowMultiple: false }, handleOnItemsSelected);
+            CustomElement.selectItems({ allowMultiple: false }).then(handleOnItemsSelected);
         }
 
         function selectItems() {
-            CustomElement.selectItems({ allowMultiple: true }, handleOnItemsSelected);
+            CustomElement.selectItems({ allowMultiple: true }).then(handleOnItemsSelected);
         }
 
         function getAssetDetails() {
-            CustomElement.getAssetDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
+            CustomElement.getAssetDetails($("#txtObjectIds").val().split('\n')).then(handleOnGetDetails);
         }
 
         function getItemDetails() {
-            CustomElement.getItemDetails($("#txtObjectIds").val().split('\n'), handleOnGetDetails)
+            CustomElement.getItemDetails($("#txtObjectIds").val().split('\n')).then(handleOnGetDetails);
         }
 
         function handleOnItemsSelected(items) {
@@ -170,21 +169,21 @@
             CustomElement.selectAssets({
                 allowMultiple: false,
                 fileType: 'all'
-            }, handleOnAssetsSelected);
+            }).then(handleOnAssetsSelected);
         }
 
         function selectAssets() {
             CustomElement.selectAssets({
                 allowMultiple: true,
                 fileType: 'all'
-            }, handleOnAssetsSelected);
+            }).then(handleOnAssetsSelected);
         }
 
         function selectImages() {
             CustomElement.selectAssets({
                 allowMultiple: true,
                 fileType: 'images'
-            }, handleOnAssetsSelected);
+            }).then(handleOnAssetsSelected);
         }
 
         function handleOnAssetsSelected(assets) {
