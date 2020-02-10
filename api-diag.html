@@ -70,6 +70,7 @@
             <h4>Selectors</h4>
             <button id="btnSelectItem" onclick="selectItem()" class="btn btn--secondary">Select item</button>
             <button id="btnSelectAsset" onclick="selectAsset()" class="btn btn--secondary">Select asset</button>
+            <button id="btnSelectImage" onclick="selectImage()" class="btn btn--secondary">Select image</button>
             <button id="btnSelectItems" onclick="selectItems()" class="btn btn--secondary">Select items</button>
             <button id="btnSelectAssets" onclick="selectAssets()" class="btn btn--secondary">Select assets</button>
             <button id="btnSelectImages" onclick="selectImages()" class="btn btn--secondary">Select images</button>
@@ -178,7 +179,14 @@
                 fileType: 'all'
             }).then(handleOnAssetsSelected);
         }
-
+        
+        function selectImage() {
+            CustomElement.selectAssets({
+                allowMultiple: false,
+                fileType: 'images'
+            }).then(handleOnAssetsSelected);
+        }
+        
         function selectImages() {
             CustomElement.selectAssets({
                 allowMultiple: true,
