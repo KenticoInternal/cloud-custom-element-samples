@@ -67,6 +67,19 @@
             </dl>
         </div>
         <div class="tile">
+            <h4>Value</h4>
+            <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
+            <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
+            <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
+            <button onclick="sendSearchableValue()" class="btn btn--secondary">Send value & searchableValue</button>
+            <br/>
+            <textarea
+                    id="txtValue"
+                    rows="4"
+                    cols="50"
+            ></textarea>
+        </div>
+        <div class="tile">
             <h4>Selectors</h4>
             <button id="btnSelectItem" onclick="selectItem()" class="btn btn--secondary">Select item</button>
             <button id="btnSelectAsset" onclick="selectAsset()" class="btn btn--secondary">Select asset</button>
@@ -94,18 +107,6 @@
             <br/>
             <span>Hint: Asset or item ids (one on line)</span>
         </div>
-    </div>
-    <div class="tile">
-        <h4>Value</h4>
-        <button onclick="sendNull()" class="btn btn--secondary">Send null</button>
-        <button onclick="send100messages()" class="btn btn--secondary">Send 100 updates</button>
-        <button onclick="sendTimestamp()" class="btn btn--secondary">Send timestamp</button>
-        <br/>
-        <textarea
-                id="txtValue"
-                rows="4"
-                cols="50"
-        ></textarea>
     </div>
     <div class="tile">
         <h4>Config</h4>
@@ -274,6 +275,16 @@
             displayValue(nowString);
         }
 
+        function sendSearchableValue() {
+          const text = $("#txtValue").val();
+          const valueObject = {
+            value: text,
+            searchableValue: text,
+          }
+          console.log("Sending: " + JSON.stringify(valueObject));
+          CustomElement.setValue(valueObject);
+        }
+
         function readOtherValue(elementCodename) {
             console.log("Reading value of " + elementCodename);
             CustomElement.getElementValue(elementCodename, function (value) {
@@ -329,6 +340,7 @@
                 displayConfig(el.config);
                 displayDisabled(el.disabled);
                 displayContext(_ctx);
+                expand();
             });
             CustomElement.onDisabledChanged(handleOnDisabledChanged);
         })
