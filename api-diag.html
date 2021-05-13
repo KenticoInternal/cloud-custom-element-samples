@@ -60,6 +60,12 @@
                 <dd id="lblProjectId"></dd>
                 <dt>Item id</dt>
                 <dd id="lblItemId"></dd>
+				<dt>Item name</dt>
+                <dd id="lblItemName"></dd>
+				<dt>Item codename</dt>
+                <dd id="lblItemCodename"></dd>
+                <dt>Collection id</dt>
+                <dd id="lblCollectionId"></dd>
                 <dt>Variant id</dt>
                 <dd id="lblVariantId"></dd>
                 <dt>Lang codename</dt>
@@ -130,6 +136,7 @@
         <h4>Observe changes</h4>
         <button onclick="observeChanges([otherElement])" class="btn btn--secondary" id="btnListenOther">Listen to other</button>
         <button onclick="observeChanges([])" class="btn btn--secondary">Listen to all</button>
+        <button onclick="observeItemChanges()" class="btn btn--secondary">Listen to Item change</button>
         <button onclick="stopListening()" class="btn btn--secondary">Stop listening</button>
         <br/>
         <textarea
@@ -235,6 +242,9 @@
         function displayContext(context) {
             $("#lblProjectId").text(context.projectId);
             $("#lblItemId").text(context.item.id);
+			$("#lblItemName").text(context.item.name);
+			$("#lblItemCodename").text(context.item.codename);
+            $("#lblCollectionId").text(context.item.collection.id);
             $("#lblVariantId").text(context.variant.id);
             $("#lblLanguageCodeName").text(context.variant.codename);
         }
@@ -310,6 +320,24 @@
             CustomElement.observeElementChanges(
                 elementCodenames,
                 changedElementCodenames => receiveChanges(changedElementCodenames, cancellation)
+            );
+        }
+
+        function receiveItemChanges(itemDetails, cancellation) {
+            if (cancellation.cancelled) {
+                return;
+            }
+            var now = new Date();
+            var nowString = now.toISOString();
+            $("#txtChanges").text(`${JSON.stringify(itemDetails)} ${nowString}`);
+        }
+        
+        function observeItemChanges() {
+            stopListening();
+            console.log(`Observing changes of item details`);
+            var cancellation = cancellationToken;
+            CustomElement.observeItemChanges(
+                    itemDetails => receiveItemChanges(itemDetails, cancellation)
             );
         }
 
